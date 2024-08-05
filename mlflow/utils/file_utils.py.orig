@@ -251,7 +251,7 @@ def make_tarfile(output_filename, source_dir, archive_name, custom_filter=None):
         tar_info.mtime = 0
         return tar_info if custom_filter is None else custom_filter(tar_info)
 
-    unzipped_file_handle, unzipped_filename = tempfile.mkstemp()
+    unzipped_filename = tempfile.mktemp()
     try:
         with tarfile.open(unzipped_filename, "w") as tar:
             tar.add(source_dir, arcname=archive_name, filter=_filter_timestamps)
@@ -261,7 +261,7 @@ def make_tarfile(output_filename, source_dir, archive_name, custom_filter=None):
                 as gzipped_tar, open(unzipped_filename, 'rb') as tar:
             gzipped_tar.write(tar.read())
     finally:
-        os.close(unzipped_file_handle)
+        os.remove(unzipped_filename)
 
 
 def _copy_project(src_path, dst_path=""):
